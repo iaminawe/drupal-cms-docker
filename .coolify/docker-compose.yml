@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  drupal:
+    image: drupal:11-php8.3-fpm-alpine
+    restart: unless-stopped
+    environment:
+      - DRUPAL_DATABASE_HOST=database
+      - DRUPAL_DATABASE_PORT=3306
+      - DRUPAL_DATABASE_NAME=${DB_NAME:-drupal}
+      - DRUPAL_DATABASE_USERNAME=${DB_USER:-drupal}
+      - DRUPAL_DATABASE_PASSWORD=${DB_PASSWORD:-drupal}
+      - PHP_FPM_PM=dynamic
+      - PHP_FPM_PM_MAX_CHILDREN=20
+      - PHP_FPM_PM_START_SERVERS=2
+      - PHP_FPM_PM_MIN_SPARE_SERVERS=1
+      - PHP_FPM_PM_MAX_SPARE_SERVERS=3
+      - COMPOSER_ALLOW_SUPERUSER=1
+    volumes:
+      - drupal_files:/opt/drupal/web/sites/default/files
+      - ../:/opt/drupal
+      - drupal_vendor:/opt/drupal/vendor
+      - drupal_core:/opt/drupal/web/core
+      - drupal_contrib_modules:/opt/drupal/web/modules/contrib
+      - drupal_contrib_themes:/opt/drupal/web/themes/contrib
+      - drupal_contrib_profiles:/opt/drupal/web/profiles/contrib
+      - drupal_libraries:/opt/drupal/web/libraries
+      - ./docker/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
+    entrypoint: ["/usr/local/bin/entrypoint.sh"]
+    depends_on:
+      - database
+      - redis
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "${NGINX_PORT:-8080}:80"
+    volumes:
+      - ../web:/opt/drupal/web:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - drupal
+
+  database:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=${DB_NAME:-drupal}
+      - MYSQL_USER=${DB_USER:-drupal}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-drupal}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-drupal_root}
+    volumes:
+      - db_data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "${PMA_PORT:-8081}:80"
+    environment:
+      - PMA_HOST=database
+      - PMA_PORT=3306
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-drupal_root}
+      - PMA_ARBITRARY=1
+    depends_on:
+      - database
+
+volumes:
+  drupal_files:
+  drupal_vendor:
+  drupal_core:
+  drupal_contrib_modules:
+  drupal_contrib_themes:
+  drupal_contrib_profiles:
+  drupal_libraries:
+  db_data:
+  redis_data:
