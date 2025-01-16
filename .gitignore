@@ -13,8 +13,20 @@
 /web/sites/development.services.yml
 /web/sites/default/settings.php
 
-# DDEV
-/.ddev/
+# DDEV - ignore snapshots and user-specific settings
+/.ddev/*snapshot.gz
+/.ddev/.global_commands
+/.ddev/.homeadditions
+/.ddev/commands
+/.ddev/db_snapshots
+/.ddev/sequelpro.spf
+/.ddev/import-db
+/.ddev/import.yaml
+/.ddev/docker-compose.*.yaml
+/.ddev/config.*.y*ml
+/.ddev/providers/
+/.ddev/traefik/
+/.ddev/traefik/certs/
 
 # Coolify
 /.coolify/.env
@@ -37,4 +49,3 @@ Thumbs.db
 *.zip
 *.tar
 *.tgz
-
