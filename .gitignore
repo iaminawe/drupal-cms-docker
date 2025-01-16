@@ -28,7 +28,10 @@
 /.ddev/traefik/
 /.ddev/traefik/certs/
 
-# Coolify
+# Environment files
+.env
+.env.*
+!.env.example
 /.coolify/.env
 
 # System files
