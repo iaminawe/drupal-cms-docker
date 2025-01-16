@@ -7,11 +7,13 @@ This guide explains how to deploy this Drupal CMS project using Coolify while ma
 The deployment configuration is isolated in the `.coolify` directory to avoid conflicts with DDEV:
 ```
 .coolify/
-  ├── docker-compose.yml    # Production Docker configuration
+  ├── docker-compose.yml    # Production Docker configuration (must be specified in Coolify settings)
   ├── nginx/               # Nginx configuration
   │   └── default.conf
   └── .env                # Production environment variables
 ```
+
+Note: By default, Coolify looks for docker-compose.yml in the root directory. This project intentionally keeps the production configuration in the .coolify directory to avoid conflicts with DDEV. You must explicitly set the Docker Compose file location to `.coolify/docker-compose.yml` in your Coolify service settings.
 
 ## Prerequisites
 
@@ -29,7 +31,10 @@ The deployment configuration is isolated in the `.coolify` directory to avoid co
    - Click "New Service"
    - Select "Docker Compose" as deployment type
    - Connect your Git repository
-   - Set the Docker Compose file path to `.coolify/docker-compose.yml`
+   - **IMPORTANT**: In the service configuration:
+     * Find the "Docker Compose File Location" field
+     * Set it to `.coolify/docker-compose.yml`
+     * This step is crucial as Coolify will look for docker-compose.yml in the root by default
 
 3. **Environment Variable Setup**
    
