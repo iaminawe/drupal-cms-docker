@@ -61,10 +61,6 @@ Note: By default, Coolify looks for docker-compose.yml in the root directory. Th
    DB_PASSWORD=<strong-password>        # Change this!
    DB_ROOT_PASSWORD=<strong-root-pass>  # Change this!
    
-   # Port configuration
-   NGINX_PORT=8080
-   PMA_PORT=8081
-   
    # PHP settings
    PHP_MEMORY_LIMIT=256M
    PHP_MAX_EXECUTION_TIME=120
@@ -110,12 +106,12 @@ Note: By default, Coolify looks for docker-compose.yml in the root directory. Th
 
 5. **Configure Database Administration**
    phpMyAdmin is included for database management:
-   - Access phpMyAdmin at port 8081 of your domain (or custom port set in PMA_PORT)
+   - Access phpMyAdmin through the URL provided by Coolify
    - Login using either:
      * Root credentials: username `root`, password from `DB_ROOT_PASSWORD`
      * Drupal database user: username from `DB_USER`, password from `DB_PASSWORD`
    - For security, consider:
-     * Changing the default port in the environment variables
+     * Using Coolify's built-in SSL/TLS for secure access
      * Setting up HTTP Basic Authentication
      * Restricting access to specific IP addresses
 
