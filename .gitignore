@@ -1,0 +1,40 @@
+# Composer dependencies
+/vendor/
+/web/core/
+/web/modules/contrib/
+/web/themes/contrib/
+/web/profiles/contrib/
+/web/libraries/
+
+# Drupal specific files
+/web/sites/*/files/
+/web/sites/*/private/
+/web/sites/*/settings.local.php
+/web/sites/development.services.yml
+/web/sites/default/settings.php
+
+# DDEV
+/.ddev/
+
+# Coolify
+/.coolify/.env
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Temporary files
+*.log
+*.sql
+*.sqlite
+*.gz
+*.zip
+*.tar
+*.tgz
+
