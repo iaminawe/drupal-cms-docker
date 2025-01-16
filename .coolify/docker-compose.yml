@@ -25,8 +25,15 @@ services:
       - drupal_contrib_themes:/opt/drupal/web/themes/contrib
       - drupal_contrib_profiles:/opt/drupal/web/profiles/contrib
       - drupal_libraries:/opt/drupal/web/libraries
-      - ./docker/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
-    entrypoint: ["/usr/local/bin/entrypoint.sh"]
+    entrypoint: |
+      sh -c '
+      if [ ! -d /opt/drupal/vendor ]; then
+          echo "Running composer install..."
+          cd /opt/drupal
+          composer install --no-dev --optimize-autoloader
+      fi
+      php-fpm
+      '
     depends_on:
       - database
       - redis

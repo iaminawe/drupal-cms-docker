@@ -9,9 +9,15 @@ The deployment configuration is isolated in the `.coolify` directory to avoid co
 .coolify/
   ├── docker-compose.yml    # Production Docker configuration (must be specified in Coolify settings)
   ├── nginx/               # Nginx configuration
-  │   └── default.conf
-  └── .env                # Production environment variables
+  │   └── default.conf     # Nginx server configuration
+  ├── .env                # Production environment variables (not in Git)
+  └── .env.example        # Template for production environment variables
 ```
+
+The configuration is designed to:
+- Keep production settings separate from development
+- Handle Composer dependencies automatically
+- Manage all services (PHP-FPM, Nginx, MariaDB, Redis, phpMyAdmin)
 
 Note: By default, Coolify looks for docker-compose.yml in the root directory. This project intentionally keeps the production configuration in the .coolify directory to avoid conflicts with DDEV. You must explicitly set the Docker Compose file location to `.coolify/docker-compose.yml` in your Coolify service settings.
 
