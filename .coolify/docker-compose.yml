@@ -11,11 +11,12 @@ services:
       - DB_NAME=${DB_NAME:-drupal}
       - DB_USER=${DB_USER:-drupal}
       - DB_PASSWORD=${DB_PASSWORD:-drupal}
-      - APACHE_DOCUMENT_ROOT=/var/www/html/web
     command: |
       bash -c '
         a2enmod rewrite
         echo "ServerName localhost" >> /etc/apache2/apache2.conf
+        sed -ri -e "s!/var/www/html!/var/www/html/web!g" /etc/apache2/sites-available/*.conf
+        sed -ri -e "s!/var/www!/var/www/html/web!g" /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
         echo "<Directory /var/www/html/web>
           AllowOverride All
         </Directory>" >> /etc/apache2/apache2.conf
@@ -40,7 +41,7 @@ services:
     depends_on:
       - database
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost/web || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
