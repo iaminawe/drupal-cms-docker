@@ -91,11 +91,14 @@ Note: By default, Coolify looks for docker-compose.yml in the root directory. Th
 
 4. **Configure Persistent Storage**
    Add the following storage mounts in Coolify:
-   - `/var/www/html/modules` for Drupal modules
-   - `/var/www/html/profiles` for Drupal profiles
-   - `/var/www/html/themes` for Drupal themes
-   - `/var/www/html/sites` for Drupal sites configuration and files
+   - `/var/www/html/web/modules` for Drupal modules
+   - `/var/www/html/web/profiles` for Drupal profiles
+   - `/var/www/html/web/themes` for Drupal themes
+   - `/var/www/html/web/sites` for Drupal sites configuration and files
    - `/var/lib/mysql` for database
+
+   Note: The configuration uses the standard Drupal web directory structure with
+   the document root set to `/var/www/html/web`
 
    Note: The deployment process will automatically run `composer install` during container initialization to install all dependencies.
 
