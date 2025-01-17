@@ -8,16 +8,15 @@ The deployment configuration is isolated in the `.coolify` directory to avoid co
 ```
 .coolify/
   ├── docker-compose.yml    # Production Docker configuration (must be specified in Coolify settings)
-  ├── nginx/               # Nginx configuration
-  │   └── default.conf     # Nginx server configuration
   ├── .env                # Production environment variables (not in Git)
   └── .env.example        # Template for production environment variables
 ```
 
 The configuration is designed to:
 - Keep production settings separate from development
-- Handle Composer dependencies automatically
-- Manage all services (PHP-FPM, Nginx, MariaDB, Redis, phpMyAdmin)
+- Use official Drupal Apache image for simplicity
+- Provide database administration through phpMyAdmin
+- Include health checks for all services
 
 Note: By default, Coolify looks for docker-compose.yml in the root directory. This project intentionally keeps the production configuration in the .coolify directory to avoid conflicts with DDEV. You must explicitly set the Docker Compose file location to `.coolify/docker-compose.yml` in your Coolify service settings.
 
@@ -92,15 +91,11 @@ Note: By default, Coolify looks for docker-compose.yml in the root directory. Th
 
 4. **Configure Persistent Storage**
    Add the following storage mounts in Coolify:
-   - `/opt/drupal/web/sites/default/files` for Drupal files
-   - `/opt/drupal/vendor` for Composer dependencies
-   - `/opt/drupal/web/core` for Drupal core
-   - `/opt/drupal/web/modules/contrib` for contributed modules
-   - `/opt/drupal/web/themes/contrib` for contributed themes
-   - `/opt/drupal/web/profiles/contrib` for contributed profiles
-   - `/opt/drupal/web/libraries` for libraries
+   - `/var/www/html/modules` for Drupal modules
+   - `/var/www/html/profiles` for Drupal profiles
+   - `/var/www/html/themes` for Drupal themes
+   - `/var/www/html/sites` for Drupal sites configuration and files
    - `/var/lib/mysql` for database
-   - `/data` for Redis
 
    Note: The deployment process will automatically run `composer install` during container initialization to install all dependencies.
 

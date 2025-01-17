@@ -2,55 +2,35 @@ version: '3.8'
 
 services:
   drupal:
-    image: drupal:11-php8.3-fpm-alpine
-    restart: unless-stopped
-    environment:
-      - DRUPAL_DATABASE_HOST=database
-      - DRUPAL_DATABASE_PORT=3306
-      - DRUPAL_DATABASE_NAME=${DB_NAME:-drupal}
-      - DRUPAL_DATABASE_USERNAME=${DB_USER:-drupal}
-      - DRUPAL_DATABASE_PASSWORD=${DB_PASSWORD:-drupal}
-      - PHP_FPM_PM=dynamic
-      - PHP_FPM_PM_MAX_CHILDREN=20
-      - PHP_FPM_PM_START_SERVERS=2
-      - PHP_FPM_PM_MIN_SPARE_SERVERS=1
-      - PHP_FPM_PM_MAX_SPARE_SERVERS=3
-      - COMPOSER_ALLOW_SUPERUSER=1
-    volumes:
-      - drupal_files:/opt/drupal/web/sites/default/files
-      - ../:/opt/drupal
-      - drupal_vendor:/opt/drupal/vendor
-      - drupal_core:/opt/drupal/web/core
-      - drupal_contrib_modules:/opt/drupal/web/modules/contrib
-      - drupal_contrib_themes:/opt/drupal/web/themes/contrib
-      - drupal_contrib_profiles:/opt/drupal/web/profiles/contrib
-      - drupal_libraries:/opt/drupal/web/libraries
-    entrypoint: |
-      sh -c '
-      if [ ! -d /opt/drupal/vendor ]; then
-          echo "Running composer install..."
-          cd /opt/drupal
-          composer install --no-dev --optimize-autoloader
-      fi
-      php-fpm
-      '
-    depends_on:
-      - database
-      - redis
-
-  nginx:
-    image: nginx:alpine
+    image: drupal:11-apache
     restart: unless-stopped
     ports:
       - "80"
+    environment:
+      - DB_HOST=database
+      - DB_NAME=${DB_NAME:-drupal}
+      - DB_USER=${DB_USER:-drupal}
+      - DB_PASSWORD=${DB_PASSWORD:-drupal}
     volumes:
-      - ../web:/opt/drupal/web:ro
-      - type: bind
-        source: ./nginx
-        target: /etc/nginx/conf.d
-        read_only: true
+      - type: volume
+        source: drupal_modules
+        target: /var/www/html/modules
+      - type: volume
+        source: drupal_profiles
+        target: /var/www/html/profiles
+      - type: volume
+        source: drupal_themes
+        target: /var/www/html/themes
+      - type: volume
+        source: drupal_sites
+        target: /var/www/html/sites
     depends_on:
-      - drupal
+      - database
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   database:
     image: mariadb:10.11
@@ -63,12 +43,11 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-
-  redis:
-    image: redis:alpine
-    restart: unless-stopped
-    volumes:
-      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-drupal_root}"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -82,14 +61,15 @@ services:
       - PMA_ARBITRARY=1
     depends_on:
       - database
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 volumes:
-  drupal_files:
-  drupal_vendor:
-  drupal_core:
-  drupal_contrib_modules:
-  drupal_contrib_themes:
-  drupal_contrib_profiles:
-  drupal_libraries:
+  drupal_modules:
+  drupal_profiles:
+  drupal_themes:
+  drupal_sites:
   db_data:
-  redis_data:
