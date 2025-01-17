@@ -166,6 +166,26 @@ If you encounter issues:
 3. Ensure persistent storage is properly configured
 4. Check Drupal's status report page for any warnings or errors
 
+Common Issues:
+
+1. **Routing/404 Errors**
+   - The configuration automatically enables Apache's mod_rewrite
+   - Configures AllowOverride All for the web directory
+   - If you still see routing issues:
+     * Check Apache logs in Coolify dashboard
+     * Verify .htaccess file exists in web directory
+     * Ensure clean URLs are enabled in Drupal
+
+2. **File Permissions**
+   - Persistent volumes are automatically configured
+   - Drupal should have write access to sites/default/files
+   - If you see permission errors, check container logs
+
+3. **Database Connection**
+   - Verify database credentials in environment variables
+   - Check database container logs
+   - Use phpMyAdmin to verify database access
+
 For additional help, refer to:
 - [Coolify Documentation](https://coolify.io/docs)
 - [Drupal Documentation](https://www.drupal.org/docs)
