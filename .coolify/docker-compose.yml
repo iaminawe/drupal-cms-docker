@@ -11,17 +11,17 @@ services:
       - DB_NAME=${DB_NAME:-drupal}
       - DB_USER=${DB_USER:-drupal}
       - DB_PASSWORD=${DB_PASSWORD:-drupal}
-    command: |
-      bash -c '
-        a2enmod rewrite
-        echo "ServerName localhost" >> /etc/apache2/apache2.conf
-        sed -ri -e "s!/var/www/html!/var/www/html/web!g" /etc/apache2/sites-available/*.conf
-        sed -ri -e "s!/var/www!/var/www/html/web!g" /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
-        echo "<Directory /var/www/html/web>
-          AllowOverride All
-        </Directory>" >> /etc/apache2/apache2.conf
-        apache2-foreground
-      '
+    # command: |
+    #   bash -c '
+    #     a2enmod rewrite
+    #     echo "ServerName localhost" >> /etc/apache2/apache2.conf
+    #     sed -ri -e "s!/var/www/html!/var/www/html/web!g" /etc/apache2/sites-available/*.conf
+    #     sed -ri -e "s!/var/www!/var/www/html/web!g" /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+    #     echo "<Directory /var/www/html/web>
+    #       AllowOverride All
+    #     </Directory>" >> /etc/apache2/apache2.conf
+    #     apache2-foreground
+    #   '
     volumes:
       - type: bind
         source: ../web
