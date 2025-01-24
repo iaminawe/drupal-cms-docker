@@ -18,6 +18,7 @@ services:
     volumes:
       - drupal_files:/opt/drupal/web/sites/default/files
       - ./web:/opt/drupal/web
+      - ./recipes:/opt/drupal/recipes
     depends_on:
       - database
       - redis
