@@ -51,21 +51,9 @@ services:
     restart: unless-stopped
     volumes:
       - redis_data:/data
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    restart: unless-stopped
-    ports:
-      - "8081:80"
-    environment:
-      - PMA_HOST=database
-      - PMA_PORT=3306
-      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-drupal_root}
-      - PMA_ARBITRARY=1
-    depends_on:
-      - database
-
 volumes:
   drupal_files:
+  web:
+  recipes:
   db_data:
   redis_data:
