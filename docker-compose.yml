@@ -18,8 +18,6 @@ services:
     volumes:
       - drupal_files:/opt/drupal/web/sites/default/files
       - ./web:/opt/drupal/web
-      - ./composer.json:/opt/drupal/composer.json
-      - ./composer.lock:/opt/drupal/composer.lock
     depends_on:
       - database
       - redis
